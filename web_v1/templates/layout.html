@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Shop Mua Bán{% endblock %} - Tech Store</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="/" class="logo">🛍️ Tech Store</a>
+            <ul class="nav-links">
+                <li><a href="/">Trang Chủ</a></li>
+                {% if session.get('user_id') %}
+                    <li><a href="/orders">Đơn Hàng</a></li>
+                    <li><a href="/cart">🛒 Giỏ Hàng</a></li>
+                    {% if session.get('is_admin') %}
+                        <li><a href="/admin" class="btn">👨‍💼 Admin</a></li>
+                    {% endif %}
+                    <li><a href="/logout" class="btn">Đăng Xuất</a></li>
+                {% else %}
+                    <li><a href="/login" class="btn">Đăng Nhập</a></li>
+                    <li><a href="/register" class="btn">Đăng Ký</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <div id="flask-flash-messages" style="display: none;">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <span class="flash-data" data-category="{{ category }}" data-message="{{ message }}"></span>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Tech Store - Nền tảng mua bán trực tuyến uy tín</p>
+        <p>Email: support@techstore.com | Hotline: 1900-xxxx</p>
+    </footer>
+
+    <script>
+        // Global Toast Notification
+        function showToast(message, type = 'success') {
+            let container = document.getElementById('toastContainer');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toastContainer';
+                container.className = 'toast-container';
+                document.body.appendChild(container);
+            }
+            
+            const icon = type === 'success' ? '✓' : (type === 'error' || type === 'danger' ? '⚠️' : 'ℹ️');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div class="toast-icon">${icon}</div>
+                <div class="toast-content">${message}</div>
+            `;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('removing');
+                setTimeout(() => toast.remove(), 350);
+            }, 3500);
+        }
+
+        // Global Confirm Dialog
+        function showConfirmDialog(title, message, onConfirm) {
+            let overlay = document.getElementById('globalConfirmOverlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'globalConfirmOverlay';
+                overlay.className = 'confirm-modal-overlay';
+                overlay.innerHTML = `
+                    <div class="confirm-box">
+                        <div style="font-size: 3rem; margin-bottom: 0.5rem;" id="globalConfirmIcon">❓</div>
+                        <h3 id="globalConfirmTitle"></h3>
+                        <p id="globalConfirmMessage"></p>
+                        <div class="confirm-actions">
+                            <button class="btn-secondary" id="globalConfirmCancel">Hủy</button>
+                            <button class="btn-danger" id="globalConfirmOk">Xác Nhận</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+            }
+            
+            document.getElementById('globalConfirmIcon').textContent = title.split(' ')[0] || '❓';
+            document.getElementById('globalConfirmTitle').textContent = title;
+            document.getElementById('globalConfirmMessage').textContent = message;
+            
+            const okBtn = document.getElementById('globalConfirmOk');
+            const cancelBtn = document.getElementById('globalConfirmCancel');
+            
+            // Clear old event listeners
+            const newOkBtn = okBtn.cloneNode(true);
+            okBtn.parentNode.replaceChild(newOkBtn, okBtn);
+            
+            newOkBtn.onclick = () => {
+                overlay.classList.remove('show');
+                if(onConfirm) onConfirm();
+            };
+            
+            cancelBtn.onclick = () => overlay.classList.remove('show');
+            overlay.onclick = (e) => { if(e.target === overlay) overlay.classList.remove('show'); };
+            
+            overlay.classList.add('show');
+        }
+
+        // Auto-show Flash Messages on Page Load
+        document.addEventListener('DOMContentLoaded', () => {
+            const flashData = document.querySelectorAll('.flash-data');
+            flashData.forEach((el, index) => {
+                setTimeout(() => {
+                    let cat = el.dataset.category;
+                    if(cat === 'message') cat = 'info'; // Default flask category
+                    showToast(el.dataset.message, cat);
+                }, index * 400); // Stagger animations if multiple messages
+            });
+        });
+    </script>
+</body>
+</html>
