@@ -1,125 +1,96 @@
-# Tech Store - Nền Tảng Mua Bán Trực Tuyến 🛍️
+# Tech Store - Cửa Hàng Công Nghệ 🛍️
 
-Một nền tảng e-commerce hoàn chỉnh được xây dựng bằng **Flask**, **SQLAlchemy**, **HTML5**, **CSS3** và **JavaScript**.
+Nền tảng e-commerce hoàn chỉnh bằng **Flask** + **SQLAlchemy**. Hỗ trợ đầy đủ: mua sắm, giỏ hàng, thanh toán, quản lý đơn hàng, panel admin CRUD.
 
-## ✨ Chức Năng Chính
+## ✨ Tính Năng Chính
 
-### 👤 Quản Lý Tài Khoản
-- ✅ Đăng ký tài khoản mới
-- ✅ Đăng nhập / Đăng xuất an toàn
-- ✅ Quản lý thông tin cá nhân
-- ✅ Lịch sử mua hàng
+- **👤 Tài khoản**: Đăng ký/đăng nhập/đăng xuất, lịch sử đơn hàng
+- **🛍️ Sản phẩm**: Danh sách (12/trang, phân trang), chi tiết, thêm giỏ nhanh (JS)
+- **🛒 Giỏ hàng**: Thêm/xóa/sửa số lượng, tính tổng
+- **💳 Thanh toán**: Checkout → Order success, cập nhật kho tự động
+- **📦 Đơn hàng**: Lịch sử + trạng thái (pending/paid/shipped/delivered)
+- **👨‍💼 Admin**: CRUD sản phẩm (add/update/delete/adjust inventory), quản lý đơn hàng/người dùng, AJAX APIs
 
-### 🛍️ Mua Sắm
-- ✅ Danh sách sản phẩm (12 items/trang)
-- ✅ Chi tiết sản phẩm (ảnh, mô tả, giá, số lượng)
-- ✅ Giỏ hàng (thêm, xóa sản phẩm)
-- ✅ Thanh toán linh hoạt (COD, Chuyển khoản, Thẻ tín dụng)
-- ✅ Xác nhận đơn hàng tức thời
+**Admin mặc định**: `admin` / `admin123` (tự tạo DB init)
 
-### 📦 Quản Lý Đơn Hàng
-- ✅ Theo dõi trạng thái (Chờ Xác Nhận → Đã Thanh Toán → Đang Gửi → Đã Giao)
-- ✅ Lịch sử đơn hàng chi tiết
-- ✅ Kiểm tra thông tin từng sản phẩm
+## 🚀 Cài Đặt & Chạy
 
-### 👨‍💼 Trang Quản Trị (Admin)
-- ✅ **Quản Lý Sản Phẩm**: Thêm, Sửa, Xóa, Cập nhật giá & số lượng
-- ✅ **Quản Lý Đơn Hàng**: Cập nhật trạng thái, xem chi tiết đơn hàng
-- ✅ **Quản Lý Người Dùng**: Liệt kê tất cả người dùng, phân biệt Admin & User
-- ✅ **Giao Diện Tab**: Chuyển đổi dễ dàng giữa các mục
-
-## 🚀 Cài Đặt Nhanh
-
-### Yêu Cầu
-- Python 3.8+
-- pip
-- SQLite (mặc định) hoặc PostgreSQL
-
-### 1️⃣ Cài Đặt Dependencies
+### Local (SQLite dev)
 ```bash
-cd c:\Users\MyPC\Desktop\Điện toán đám mây\web_v1
 pip install -r requirements.txt
-```
-
-### 2️⃣ Chạy Ứng Dụng
-```bash
 python app.py
 ```
-Mở trình duyệt và truy cập: **http://localhost:5000**
+→ **http://localhost:5000** (auto tạo DB + 8 sản phẩm mẫu)
 
-### 3️⃣ Đăng Nhập Admin
-- **Username**: `admin`
-- **Password**: `admin123`
+### Docker
+```bash
+docker build -t techstore .
+docker run -p 5000:5000 techstore
+```
+
+### Render (từ render.yaml + PostgreSQL)
+Push Git → Render auto-deploy (env: SECRET_KEY auto-gen, DATABASE_URL từ service)
 
 ## 🔐 Tài Khoản Test
 
 | Role | Username | Password |
 |------|----------|----------|
 | Admin | admin | admin123 |
-| User | user | user123 |
 
-## 📁 Cấu Trúc Dự Án
+## 📁 Cấu Trúc Dự Án (Đầy Đủ)
 
 ```
-web_v1/
-├── app.py                  # Backend chính
-├── requirements.txt        # Dependencies
-├── README.md              # Hướng dẫn này
-├── render.yaml            # Config deploy Render
-├── Dockerfile             # Config Docker
+web_v1/                          # Current dir
+├── .gitignore
+├── app.py                      # Flask app + models + routes + DB init
+├── requirements.txt            # Flask/SQLAlchemy/Werkzeug/psycopg2/gunicorn
+├── Dockerfile                  # Docker build
+├── render.yaml                 # Render deploy (Docker + Postgres Singapore)
+├── README.md                   # This file
 ├── static/
-│   └── style.css          # CSS chính cho toàn ứng dụng
-└── templates/
-    ├── layout.html        # Template chính
-    ├── index.html         # Trang chủ (danh sách sản phẩm)
-    ├── product_detail.html # Chi tiết sản phẩm
-    ├── login.html         # Đăng nhập
-    ├── register.html      # Đăng ký
-    ├── cart.html          # Giỏ hàng
-    ├── checkout.html      # Thanh toán
-    ├── order_success.html # Xác nhận đơn hàng
-    ├── orders.html        # Lịch sử đơn hàng
-    └── admin.html         # Trang quản trị
+│   └── style.css               # Responsive CSS
+└── templates/                  # Jinja2 HTML
+    ├── layout.html             # Base layout
+    ├── index.html              # Home/products grid + pagination + quick cart
+    ├── product_detail.html     # Product view
+    ├── cart.html               # Cart management
+    ├── checkout.html           # Payment form
+    ├── order_success.html      # Order confirmation
+    ├── orders.html             # User orders history
+    ├── admin.html              # Admin dashboard (tabs: products/orders/users)
+    ├── login.html              # Auth
+    └── register.html           # Signup
 ```
 
-## 🎯 Các API Endpoint Chính
+## 🔗 Chính Routes/Endpoints (từ app.py)
 
-| Method | URL | Chức Năng |
-|--------|-----|----------|
-| GET | `/` | Trang chủ |
-| GET | `/product/<id>` | Chi tiết sản phẩm |
-| GET/POST | `/register` | Đăng ký |
-| GET/POST | `/login` | Đăng nhập |
-| GET | `/logout` | Đăng xuất |
-| GET | `/cart` | Xem giỏ hàng |
-| POST | `/add-to-cart/<id>` | Thêm vào giỏ |
-| POST | `/remove-from-cart/<id>` | Xóa khỏi giỏ |
-| GET/POST | `/checkout` | Thanh toán |
-| GET | `/order-success/<id>` | Xác nhận đơn hàng |
-| GET | `/orders` | Lịch sử đơn hàng |
-| GET | `/admin` | Trang quản trị |
-| POST | `/admin/add-product` | Thêm sản phẩm |
-| POST | `/admin/update-product/<id>` | Cập nhật sản phẩm |
-| POST | `/admin/delete-product/<id>` | Xóa sản phẩm |
-| POST | `/admin/update-order-status/<id>` | Cập nhật trạng thái đơn hàng |
-| GET | `/admin/order/<id>` | Xem chi tiết đơn hàng (API) |
+**User**:
+- `/` (GET): Products paginated (12/page)
+- `/product/<id>`: Detail
+- `/register`, `/login`, `/logout`
+- `/cart`, `/add-to-cart/<id>` (POST qty), `/remove-from-cart/<id>`
+- `/checkout` (POST → order), `/order-success/<id>`, `/orders`
 
-## 🗄️ Cơ Sở Dữ Liệu
+**Admin** (is_admin only):
+- `/admin` (GET): Dashboard
+- `/admin/add-product` (POST form)
+- `/admin/update-product/<id>`, `/admin/delete-product/<id>` (POST/AJAX)
+- `/admin/adjust-inventory` (POST), `/admin/update-order-status/<id>`
+- `/admin/product/<id>`, `/admin/order/<id>` (JSON APIs)
 
-### User (Người Dùng)
-- id, username, email, password, is_admin, created_at
+**Errors**: 404/500 handlers
 
-### Product (Sản Phẩm)
-- id, name, description, price, quantity, image_url, created_at
+## 🗄️ Database Models (SQLAlchemy)
 
-### Order (Đơn Hàng)
-- id, user_id, total_price, status, created_at
+| Model | Fields | Relations |
+|-------|--------|-----------|
+| **User** | id, username*, email*, password*, is_admin, created_at | orders |
+| **Product** | id, name*, desc, price*, qty, image_url, created_at | order_items, cart_items |
+| **Order** | id, user_id*, total_price*, status*, created_at | items (OrderItem) |
+| **OrderItem** | id, order_id*, product_id*, qty*, price* | order, product |
+| **CartItem** | id, user_id, product_id*, qty | product |
 
-### OrderItem (Chi Tiết Đơn Hàng)
-- id, order_id, product_id, quantity, price
-
-### CartItem (Giỏ Hàng)
-- id, user_id, product_id, quantity
+*required; Auto-init: admin + 8 tech products (iPhone15, MacBook M2, etc.)
 
 ## 🎨 Tính Năng Giao Diện
 
@@ -148,13 +119,6 @@ PORT=5000                           # Port để chạy server
 - **Security**: Werkzeug password hashing
 - **Deployment**: Docker, Render, Gunicorn
 
-## 🐛 Debugging
-
-Nếu gặp lỗi:
-1. Kiểm tra logs trong terminal
-2. Xóa file `shop.db` để reset database
-3. Đảm bảo Python 3.8+ được cài đặt
-4. Chạy lại `pip install -r requirements.txt`
 
 ## 🌐 Deploy
 
@@ -173,8 +137,6 @@ docker run -p 5000:5000 techstore
 MIT License - Tự do sử dụng cho mục đích cá nhân & thương mại
 
 ## 👥 Hỗ Trợ
-- Email: support@techstore.com
-- Hotline: 1900-xxxx
 
 ### Bước 3: Cài Đặt Dependencies
 ```bash
@@ -231,12 +193,7 @@ docker build -t tech-store .
 docker run -p 5000:5000 tech-store
 ```
 
-## 📞 Liên Hệ và Hỗ Trợ
-- Email: support@techstore.com
-- Hotline: 1900-xxxx
 
-## 📄 Giấy Phép
-MIT License - Tự do sử dụng và phân phối
 
 ---
 **Phiên Bản**: 1.0.0  
